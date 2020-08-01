@@ -1,0 +1,65 @@
+2019-12-02 23:57:15,347 ERROR: Exception on /login [GET] [in /Users/donghao/Desktop/Python/projects/microblog/venv/lib/python3.7/site-packages/flask/app.py:1891]
+Traceback (most recent call last):
+  File "/Users/donghao/Desktop/Python/projects/microblog/venv/lib/python3.7/site-packages/flask/app.py", line 2446, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/donghao/Desktop/Python/projects/microblog/venv/lib/python3.7/site-packages/flask/app.py", line 1951, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/donghao/Desktop/Python/projects/microblog/venv/lib/python3.7/site-packages/flask/app.py", line 1820, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/donghao/Desktop/Python/projects/microblog/venv/lib/python3.7/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/donghao/Desktop/Python/projects/microblog/venv/lib/python3.7/site-packages/flask/app.py", line 1949, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/donghao/Desktop/Python/projects/microblog/venv/lib/python3.7/site-packages/flask/app.py", line 1935, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/donghao/Desktop/Python/projects/microblog/app/routes.py", line 59, in login
+    return render_template('login.html', title='Sign In', form=form)
+  File "/Users/donghao/Desktop/Python/projects/microblog/venv/lib/python3.7/site-packages/flask/templating.py", line 140, in render_template
+    ctx.app,
+  File "/Users/donghao/Desktop/Python/projects/microblog/venv/lib/python3.7/site-packages/flask/templating.py", line 120, in _render
+    rv = template.render(context)
+  File "/Users/donghao/Desktop/Python/projects/microblog/venv/lib/python3.7/site-packages/jinja2/asyncsupport.py", line 76, in render
+    return original_render(self, *args, **kwargs)
+  File "/Users/donghao/Desktop/Python/projects/microblog/venv/lib/python3.7/site-packages/jinja2/environment.py", line 1008, in render
+    return self.environment.handle_exception(exc_info, True)
+  File "/Users/donghao/Desktop/Python/projects/microblog/venv/lib/python3.7/site-packages/jinja2/environment.py", line 780, in handle_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/donghao/Desktop/Python/projects/microblog/venv/lib/python3.7/site-packages/jinja2/_compat.py", line 37, in reraise
+    raise value.with_traceback(tb)
+  File "/Users/donghao/Desktop/Python/projects/microblog/app/templates/login.html", line 2, in top-level template code
+    {% import 'bootstrap/wtf.html' as wtf %}
+  File "/Users/donghao/Desktop/Python/projects/microblog/venv/lib/python3.7/site-packages/jinja2/environment.py", line 1005, in render
+    return concat(self.root_render_func(self.new_context(vars)))
+  File "/Users/donghao/Desktop/Python/projects/microblog/app/templates/login.html", line 17, in root
+  File "/Users/donghao/Desktop/Python/projects/microblog/app/templates/base.html", line 14, in root
+    <span class="icon-bar"></span>
+  File "/Users/donghao/Desktop/Python/projects/microblog/venv/lib/python3.7/site-packages/flask_bootstrap/templates/bootstrap/base.html", line 10, in root
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  File "/Users/donghao/Desktop/Python/projects/microblog/venv/lib/python3.7/site-packages/flask_bootstrap/templates/bootstrap/base.html", line 20, in block_doc
+    {% block body -%}
+  File "/Users/donghao/Desktop/Python/projects/microblog/venv/lib/python3.7/site-packages/flask_bootstrap/templates/bootstrap/base.html", line 39, in block_html
+  File "/Users/donghao/Desktop/Python/projects/microblog/venv/lib/python3.7/site-packages/flask_bootstrap/templates/bootstrap/base.html", line 92, in block_body
+  File "/Users/donghao/Desktop/Python/projects/microblog/app/templates/base.html", line 80, in block_content
+  File "/Users/donghao/Desktop/Python/projects/microblog/app/templates/login.html", line 30, in block_app_content
+  File "/Users/donghao/Desktop/Python/projects/microblog/venv/lib/python3.7/site-packages/jinja2/runtime.py", line 262, in call
+    return __obj(*args, **kwargs)
+  File "/Users/donghao/Desktop/Python/projects/microblog/venv/lib/python3.7/site-packages/flask/helpers.py", line 370, in url_for
+    return appctx.app.handle_url_build_error(error, endpoint, values)
+  File "/Users/donghao/Desktop/Python/projects/microblog/venv/lib/python3.7/site-packages/flask/app.py", line 2215, in handle_url_build_error
+    reraise(exc_type, exc_value, tb)
+  File "/Users/donghao/Desktop/Python/projects/microblog/venv/lib/python3.7/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/donghao/Desktop/Python/projects/microblog/venv/lib/python3.7/site-packages/flask/helpers.py", line 358, in url_for
+    endpoint, values, method=method, force_external=external
+  File "/Users/donghao/Desktop/Python/projects/microblog/venv/lib/python3.7/site-packages/werkzeug/routing.py", line 2020, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.BuildError: Could not build url for endpoint 'reset_password_request'. Did you mean 'edit_profile' instead?
+2019-12-02 23:57:19,237 INFO: Microblog startup [in /Users/donghao/Desktop/Python/projects/microblog/app/__init__.py:54]
+2019-12-03 00:31:18,576 INFO: Microblog startup [in /Users/donghao/Desktop/Python/projects/microblog/app/__init__.py:57]
+2019-12-03 00:33:35,809 INFO: Microblog startup [in /Users/donghao/Desktop/Python/projects/microblog/app/__init__.py:57]
+2019-12-03 00:35:16,070 INFO: Microblog startup [in /Users/donghao/Desktop/Python/projects/microblog/app/__init__.py:57]
+2019-12-03 11:35:46,823 INFO: Microblog startup [in /Users/donghao/Desktop/Python/projects/microblog/app/__init__.py:58]
+2019-12-03 11:36:12,590 INFO: Microblog startup [in /Users/donghao/Desktop/Python/projects/microblog/app/__init__.py:58]
+2019-12-03 12:13:58,868 INFO: Microblog startup [in /Users/donghao/Desktop/Python/projects/microblog/app/__init__.py:61]
+2019-12-03 12:15:27,509 INFO: Microblog startup [in /Users/donghao/Desktop/Python/projects/microblog/app/__init__.py:61]
+2019-12-03 12:15:45,652 INFO: Microblog startup [in /Users/donghao/Desktop/Python/projects/microblog/app/__init__.py:61]

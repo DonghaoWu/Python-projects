@@ -1,0 +1,20 @@
+<!-- Header -->
+<header class="fbd-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
+  <div class="mdl-layout__header-row">
+    <span class="mdl-layout-title">Crewasis Database</span>
+    <div class="mdl-layout-spacer"></div>
+      <!-- Right aligned menu below button -->
+      <button id="fbd-menu-lower-right"
+              class="mdl-button mdl-js-button mdl-button--icon">
+        <i class="material-icons">account_circle</i>
+      </button>
+
+      <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
+          for="fbd-menu-lower-right">
+        <li class="mdl-menu__item"><a href="{{ url_for('main.user', username=current_user.username) }}">My Account</a></li>
+        <li class="mdl-menu__item"><a href="{{ url_for('main.edit_profile', username=current_user.username) }}">Edit Profile</li>
+        <li disabled class="mdl-menu__item">Log In</li>
+        <li class="mdl-menu__item"><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
+      </ul>
+  </div>
+</header>

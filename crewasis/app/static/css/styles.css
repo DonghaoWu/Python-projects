@@ -1,0 +1,329 @@
+
+html, body {
+  font-family: 'Roboto', 'Helvetica', sans-serif;
+}
+.fbd-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 24px;
+}
+.fbd-layout .mdl-layout__header .mdl-layout__drawer-button {
+  color: rgba(0, 0, 0, 0.54);
+}
+.mdl-layout__drawer .avatar {
+  margin-bottom: 16px;
+}
+.fbd-drawer {
+  border: none;
+}
+/* iOS Safari specific workaround */
+.fbd-drawer .mdl-menu__container {
+  z-index: -1;
+}
+.fbd-drawer .fbd-navigation {
+  z-index: -2;
+}
+/* END iOS Safari specific workaround */
+.fbd-drawer .mdl-menu .mdl-menu__item {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+.fbd-drawer-header {
+  text-align: center;
+  box-sizing: border-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-justify-content: flex-end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  padding: 16px;
+  height: 128px;
+}
+.fbd-drawer-header .app-title {
+/*
+    margin-top: 10px;
+    margin-bottom: 5px;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-flex-shrink: 0;
+    -ms-flex-negative: 0;
+    flex-shrink: 0;
+*/
+    text-transform: uppercase;
+    font-size: 16px;
+    font-weight: 500;
+}
+.app-title {
+    margin: auto;
+}
+
+.fbd-drawer-header .app-title a {
+    text-decoration: none;
+}
+.fbd-avatar-dropdown {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  position: relative;
+  -webkit-flex-direction: row;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: 100%;
+}
+
+.fbd-navigation {
+  -webkit-flex-grow: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+}
+.fbd-layout .fbd-navigation .mdl-navigation__link {
+  display: -webkit-flex !important;
+  display: -ms-flexbox !important;
+  display: flex !important;
+  -webkit-flex-direction: row;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  color: rgba(255, 255, 255, 0.56);
+  font-weight: 500;
+}
+.fbd-layout .fbd-navigation .mdl-navigation__link:hover {
+  background-color: #00BCD4;
+  color: #37474F;
+}
+.fbd-navigation .mdl-navigation__link .material-icons {
+  font-size: 24px;
+  color: rgba(255, 255, 255, 0.56);
+  margin-right: 32px;
+}
+
+.fbd-content {
+  max-width: 1080px;
+}
+
+.fbd-charts {
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+.fbd-chart:nth-child(1) {
+  color: #ACEC00;
+}
+.fbd-chart:nth-child(2) {
+  color: #00BBD6;
+}
+.fbd-chart:nth-child(3) {
+  color: #BA65C9;
+}
+.fbd-chart:nth-child(4) {
+  color: #EF3C79;
+}
+.fbd-graphs {
+  padding: 16px 32px;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-align-items: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+}
+/* TODO: Find a proper solution to have the graphs
+ * not float around outside their container in IE10/11.
+ * Using a browserhacks.com solution for now.
+ */
+_:-ms-input-placeholder, :root .fbd-graphs {
+  min-height: 664px;
+}
+_:-ms-input-placeholder, :root .fbd-graph {
+  max-height: 300px;
+}
+/* TODO end */
+.fbd-graph:nth-child(1) {
+  color: #00b9d8;
+}
+.fbd-graph:nth-child(2) {
+  color: #d9006e;
+}
+
+.fbd-cards {
+  -webkit-align-items: flex-start;
+      -ms-flex-align: start;
+          align-items: flex-start;
+  -webkit-align-content: flex-start;
+      -ms-flex-line-pack: start;
+          align-content: flex-start;
+}
+.fbd-cards .fbd-separator {
+  height: 32px;
+}
+.fbd-cards .mdl-card__title.mdl-card__title {
+  color: white;
+  font-size: 24px;
+  font-weight: 400;
+}
+.fbd-cards ul {
+  padding: 0;
+}
+.fbd-cards h3 {
+  font-size: 1em;
+}
+.fbd-updates .mdl-card__title {
+  min-height: 200px;
+  background-position: 90% 100%;
+  background-repeat: no-repeat;
+}
+.fbd-cards .mdl-card__actions a {
+  color: #00BCD4;
+  text-decoration: none;
+}
+
+.fbd-options h3 {
+  margin: 0;
+}
+.fbd-options .mdl-checkbox__box-outline {
+  border-color: rgba(255, 255, 255, 0.89);
+}
+.fbd-options ul {
+  margin: 0;
+  list-style-type: none;
+}
+.fbd-options li {
+  margin: 4px 0;
+}
+.fbd-options .material-icons {
+  color: rgba(255, 255, 255, 0.89);
+}
+.fbd-options .mdl-card__actions {
+  height: 64px;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  box-sizing: border-box;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+#container1 {
+  margin-bottom: 5px;
+  overflow: hidden;
+  border: 2px solid silver;
+  border-radius: 6px;
+  background: white;
+}
+
+#us-map{
+  display: block;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+path:hover, circle:hover {
+  stroke: #002868 !important;
+  stroke-width:2px;
+  stroke-linejoin: round;
+  fill: #002868 !important;
+  cursor: pointer;
+}
+#path67 {
+  fill: none !important;
+  stroke: #A9A9A9 !important;
+  cursor: default;
+}
+#info-box {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  display: none;
+  position: fixed;
+  width: 200px;
+  top: 0px;
+  left: 0px;
+  z-index: 9997;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 2px solid #d1cfcf;
+  border-radius: 1px;
+  padding: 5px;
+  font-family: Roboto;
+}
+#info-box h1 {
+    width: 100%;
+    margin: 0;
+    background: #054b75;
+    color: #fff;
+    text-align: center;
+    font-size: 20px;
+    border-bottom: 1px solid #1a1a1a;
+}
+#info-box p {
+    padding: 0 8px;
+    font-size: 12px;
+    color: #1a1a1a;
+    margin-bottom: 0 !important;
+    line-height: 2em;
+    margin: 0 0 6px;
+}
+.container-map {
+    width: 96%;
+    height: max-content;
+    margin-bottom: 2rem;
+    position: relative;
+    padding: 2rem;
+}
+
+@media only screen and (max-width: 800px) {
+.container-map {
+    width: 100%;
+    height: max-content;
+    margin: 0;
+    position: relative;
+    padding: 0;
+  }
+}
+.Container {
+    max-width: 1600px !important;
+    margin: 0 auto;
+    padding: 0 1%;
+    box-sizing: border-box;
+}
+.map-legend {
+  padding: 1rem 1rem;
+}
+.map-legend .legend {
+  list-style: none;
+}
+.map-legend .legend li {
+    float: left;
+    margin-right: 5px;
+    color: #1a1a1a;
+    font-family: "Industry","Roboto","Helvetica Neue",Helvetica,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Droid Sans",sans-serif;
+    font-size: 1rem;
+    font-weight: 300;
+}
+.map-legend .legend span {
+    border: 1px solid #ccc;
+    float: left;
+    width: 20px;
+    height: 20px;
+    margin: 4px;
+}

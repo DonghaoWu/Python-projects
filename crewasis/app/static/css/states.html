@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>BREWASIS</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/lib/material.min.css') }}" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.20/datatables.min.css"/>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}" />
+    <script src="{{ url_for('static', filename='js/lib/jquery-3.3.1.js') }}"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.20/datatables.min.js"></script>
+    <script src="{{ url_for('static', filename='js/lib/dataTables.material.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/lib/jquery.dataTables.min.js') }}"></script>
+<!--    <style>
+    tr.odd:hover {
+    background-color: #6699CC !important;}
+    tr.even:hover {
+    background-color: #6699CC !important;}
+    </style>
+-->
+  </head>
+  <body>
+    <a href="/"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="Brewasis" class="center"></a>
+    <h3 id="top">Barrels of Craft Beer Produced per Year 2008-2018</h3>
+
+
+     <div id="data" style="width:80%; margin: auto;">
+      <div class="login-btn">
+      <a href="./" class="button" id="admin">HOME</a>
+     </div>
+<!--
+
+  <table id="table-state" style="background-color: #f2f2f2;">
+      <tr>
+          <td style="width:60px">STATE</td>
+          <td style="width:50px">2008</td> <td style="width:50px">2009</td><td style="width:50px">2010</td><td style="width:50px">2011</td><td style="width:50px">2012</td>
+          <td style="width:50px">2013</td><td style="width:50px">2014</td><td style="width:50px">2015</td><td style="width:50px">2016</td><td style="width:50px">2017</td><td>2018</td>
+      </tr>
+    </table>
+-->    {{state_data | safe}}
+         {{ script | safe }}
+    </div>
+    <script>
+    $(document).ready(function() {
+    $('#example').DataTable( {
+        columnDefs: [
+            {
+                targets: [ 0, 1, 2 ],
+                className: 'mdl-data-table__cell--non-numeric'
+            }
+        ]
+    } );
+} );
+    </script>
+
+  </body>
+</html>

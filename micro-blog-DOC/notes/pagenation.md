@@ -1,0 +1,374 @@
+The home page needs to have a form in which users can type new posts. First I create a form class:
+
+- 建立一个类
+`app/forms.py`
+
+```py
+class PostForm(FlaskForm):
+    post = TextAreaField('Say something', validators=[
+        DataRequired(), Length(min=1, max=140)])
+    submit = SubmitField('Submit')
+```
+
+```py
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Length
+from app.models import User
+
+
+class LoginForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    remember_me = BooleanField('Remember Me')
+    submit = SubmitField('Sign In')
+
+
+class RegistrationForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    password2 = PasswordField(
+        'Repeat Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Register')
+
+    def validate_username(self, username):
+        user = User.query.filter_by(username=username.data).first()
+        if user is not None:
+            raise ValidationError('Please use a different username.')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user is not None:
+            raise ValidationError('Please use a different email address.')
+
+
+class EditProfileForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    about_me = TextAreaField('About me', validators=[Length(min=0, max=140)])
+    submit = SubmitField('Submit')
+
+    def __init__(self, original_username, *args, **kwargs):
+        super(EditProfileForm, self).__init__(*args, **kwargs)
+        self.original_username = original_username
+
+    def validate_username(self, username):
+        if username.data != self.original_username:
+            user = User.query.filter_by(username=self.username.data).first()
+            if user is not None:
+                raise ValidationError('Please use a different username.')
+
+class PostForm(FlaskForm):
+    post = TextAreaField('Say something', validators=[
+        DataRequired(), Length(min=1, max=140)])
+    submit = SubmitField('Submit')
+```
+
+- 建立一个表对接类
+`./app/templates/index.html`
+```html
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Hi, {{ current_user.username }}!</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.post.label }}<br>
+            {{ form.post(cols=32, rows=4) }}<br>
+            {% for error in form.post.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+    {% for post in posts %}
+    <p>
+    {{ post.author.username }} says: <b>{{ post.body }}</b>
+    </p>
+    {% endfor %}
+{% endblock %}
+```
+
+- The final part is to add the form creation and handling in the view function，建立跟数据库的互动。
+`./app/routes.py`
+```py
+from app.forms import PostForm
+from app.models import Post
+
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
+@login_required
+def index():
+    form = PostForm()
+    if form.validate_on_submit():
+        post = Post(body=form.post.data, author=current_user)
+        db.session.add(post)
+        db.session.commit()
+        flash('Your post is now live!')
+        return redirect(url_for('index'))
+    posts = [
+        {
+            'author': {'username': 'John'},
+            'body': 'Beautiful day in Portland!'
+        },
+        {
+            'author': {'username': 'Susan'},
+            'body': 'The Avengers movie was so cool!'
+        }
+    ]
+    return render_template("index.html", title='Home Page', form=form,
+                           posts=posts)
+```
+
+数据流接口，用户在前端填表，前端表跟自定义类连接，表数据进入类，最后对类进行整理并跟数据库互动。
+
+对于表格的详细进一步解释，对之前的表格也有启示。
+
+Let's review the changes in this view function one by one:
+
+I'm now importing the Post and PostForm classes
+I accept POST requests in both routes associated with the index view function in addition to GET requests, since this view function will now receive form data.
+The form processing logic inserts a new Post record into the database.
+The template receives the form object as an additional argument, so that it can render the text field.
+Before I continue, I wanted to mention something important related to processing of web forms. Notice how after I process the form data, I end the request by issuing a redirect to the home page. I could have easily skipped the redirect and allowed the function to continue down into the template rendering part, since this is already the index view function.
+
+So, why the redirect? It is a standard practice to respond to a POST request generated by a web form submission with a redirect. This helps mitigate an annoyance with how the refresh command is implemented in web browsers. All the web browser does when you hit the refresh key is to re-issue the last request. If a POST request with a form submission returns a regular response, then a refresh will re-submit the form. Because this is unexpected, the browser is going to ask the user to confirm the duplicate submission, but most users will not understand what the browser is asking them. But if a POST request is answered with a redirect, the browser is now instructed to send a GET request to grab the page indicated in the redirect, so now the last request is not a POST request anymore, and the refresh command works in a more predictable way.
+
+This simple trick is called the Post/Redirect/Get pattern. It avoids inserting duplicate posts when a user inadvertently refreshes the page after submitting a web form.
+
+- 调用上一章定义的posts query method 去显示所有的posts。
+
+`./app/routes.py`
+
+```py
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
+@login_required
+def index():
+    # ...
+    posts = current_user.followed_posts().all()
+    return render_template("index.html", title='Home Page', form=form, posts=posts)
+```
+
+I'm going to create a new page that I'm going to call the "Explore" page. This page will work like the home page, but instead of only showing posts from followed users, it will show a global post stream from all users. Here is the new explore view function:
+
+`./app/routes.py`
+```py
+@app.route('/explore')
+@login_required
+def explore():
+    posts = Post.query.order_by(Post.timestamp.desc()).all()
+    return render_template('index.html', title='Explore', posts=posts)
+```
+
+- Since this page is going to be very similar to the main page, I decided to reuse the template. But one difference with the main page is that in the explore page I do not want to have a form to write blog posts, so in this view function I did not include the form argument in the template call.
+
+- To prevent the index.html template from crashing when it tries to render a web form that does not exist, I'm going to add a conditional that only renders the form if it is defined:
+
+- 在这里展示了在同一个page里面展示不同的组件的能力。
+
+`./app/templates/index.html`
+
+```html
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Hi, {{ current_user.username }}!</h1>
+    {% if form %}
+    <form action="" method="post">
+        ...
+    </form>
+    {% endif %}
+    ...
+{% endblock %}
+```
+
+I'm also going to add a link to this new page in the navigation bar:
+
+`./app/templates/base.html`
+
+```html
+<a href="{{ url_for('explore') }}">Explore</a>
+```
+
+`./app/templates/_post.html`
+
+```html
+    <table>
+        <tr valign="top">
+            <td><img src="{{ post.author.avatar(36) }}"></td>
+            <td>
+                <a href="{{ url_for('user', username=post.author.username) }}">
+                    {{ post.author.username }}
+                </a>
+                says:<br>{{ post.body }}
+            </td>
+        </tr>
+    </table>
+```
+
+I can now use this sub-template to render blog posts in the home and explore pages:
+`./app/templates/index.html`
+
+```html
+    ...
+    {% for post in posts %}
+        {% include '_post.html' %}
+    {% endfor %}
+    ...
+```
+
+ Now a user can visit the explore page to read blog posts from unknown users and based on those posts find new users to follow, which can be done by simply clicking on a username to access the profile page.
+
+ - Pagination of Blog Posts
+
+ Now let's think about how I can implement pagination in the index() view function. I can start by adding a configuration item to the application that determines how many items will be displayed per page.
+
+ `./config.py`
+
+ ```py
+class Config(object):
+    # ...
+    POSTS_PER_PAGE = 3
+ ```
+
+ It is a good idea to have these application-wide "knobs" that can change behaviors in the configuration file, because then I can go to a single place to make adjustments. In the final application I will of course use a larger number than three items per page, but for testing it is useful to work with small numbers.
+
+ Next, I need to decide how the page number is going to be incorporated into application URLs. A fairly common way is to use a query string argument to specify an optional page number, defaulting to page 1 if it is not given. Here are some example URLs that show how I'm going to implement this:
+
+ - `注意，这里使用的是 query string argument`
+
+ To access arguments given in the query string, I can use the Flask's request.args object. You have seen this already in Chapter 5, where I implemented user login URLs from Flask-Login that can include a next query string argument.
+
+`./app/routes.py`
+
+```py
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
+@login_required
+def index():
+    # ...
+    page = request.args.get('page', 1, type=int)
+    posts = current_user.followed_posts().paginate(
+        page, app.config['POSTS_PER_PAGE'], False)
+    return render_template('index.html', title='Home', form=form, posts=posts.items)
+
+@app.route('/explore')
+@login_required
+def explore():
+    page = request.args.get('page', 1, type=int)
+    posts = Post.query.order_by(Post.timestamp.desc()).paginate(
+        page, app.config['POSTS_PER_PAGE'], False)
+    return render_template("index.html", title='Explore', posts=posts.items)
+```
+
+With these changes, the two routes determine the page number to display, either from the page query string argument or a default of 1, and then use the paginate() method to retrieve only the desired page of results. The POSTS_PER_PAGE configuration item that determines the page size is accessed through the app.config object.
+
+- Page Navigation
+
+The next change is to add links at the bottom of the blog post list that allow users to navigate to the next and/or previous pages. Remember that I mentioned that the return value from a paginate() call is an object of a Pagination class from Flask-SQLAlchemy? So far, I have used the items attribute of this object, which contains the list of items retrieved for the selected page. But this object has a few other attributes that are useful when building pagination links:
+
+has_next: True if there is at least one more page after the current one
+has_prev: True if there is at least one more page before the current one
+next_num: page number for the next page
+prev_num: page number for the previous page
+
+`./app/routes.py`
+
+```py
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
+@login_required
+def index():
+    # ...
+    page = request.args.get('page', 1, type=int)
+    posts = current_user.followed_posts().paginate(
+        page, app.config['POSTS_PER_PAGE'], False)
+    next_url = url_for('index', page=posts.next_num) \
+        if posts.has_next else None
+    prev_url = url_for('index', page=posts.prev_num) \
+        if posts.has_prev else None
+    return render_template('index.html', title='Home',form=form, posts=posts.items, next_url=next_url,
+prev_url=prev_url)
+
+ @app.route('/explore')
+ @login_required
+ def explore():
+    page = request.args.get('page', 1, type=int)
+    posts = Post.query.order_by(Post.timestamp.desc()).paginate(
+        page, app.config['POSTS_PER_PAGE'], False)
+    next_url = url_for('explore', page=posts.next_num) \
+        if posts.has_next else None
+    prev_url = url_for('explore', page=posts.prev_num) \
+        if posts.has_prev else None
+    return render_template("index.html", title='Explore', posts=posts.items, next_url=next_url, prev_url=prev_url)
+```
+
+The next_url and prev_url in these two view functions are going to be set to a URL returned by url_for() only if there is a page in that direction. If the current page is at one of the ends of the collection of posts, then the has_next or has_prev attributes of the Pagination object will be False, and in that case the link in that direction will be set to None.
+
+`One interesting aspect of the url_for() function that I haven't discussed before is that you can add any keyword arguments to it, and if the names of those arguments are not referenced in the URL directly, then Flask will include them in the URL as query arguments.`
+
+The pagination links are being set to the index.html template, so now let's render them on the page, right below the post list:
+
+`./app/templates/index.html`
+```html
+    ...
+    {% for post in posts %}
+        {% include '_post.html' %}
+    {% endfor %}
+    {% if prev_url %}
+    <a href="{{ prev_url }}">Newer posts</a>
+    {% endif %}
+    {% if next_url %}
+    <a href="{{ next_url }}">Older posts</a>
+    {% endif %}
+    ...
+```
+
+- Pagination in the User Profile Page
+
+To be consistent, the user profile page should be changed to match the pagination style of the index page.
+
+`./app/routes.py`
+```py
+@app.route('/user/<username>')
+@login_required
+def user(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    page = request.args.get('page', 1, type=int)
+    posts = user.posts.order_by(Post.timestamp.desc()).paginate(
+        page, app.config['POSTS_PER_PAGE'], False)
+    next_url = url_for('user', username=user.username, page=posts.next_num) \
+        if posts.has_next else None
+    prev_url = url_for('user', username=user.username, page=posts.prev_num) \
+        if posts.has_prev else None
+    return render_template('user.html', user=user, posts=posts.items,
+                           next_url=next_url, prev_url=prev_url)
+```
+
+To get the list of posts from the user, I take advantage of the fact that the user.posts relationship is a query that is already set up by SQLAlchemy as a result of the db.relationship() definition in the User model. I take this query and add a order_by() clause so that I get the newest posts first, and then do the pagination exactly like I did for the posts in the index and explore pages. Note that the pagination links that are generated by the url_for() function need the extra username argument, because they are pointing back at the user profile page, which has this username as a dynamic component of the URL.
+
+`./app/templates/user.html`
+
+```html
+    ...
+    {% for post in posts %}
+        {% include '_post.html' %}
+    {% endfor %}
+    {% if prev_url %}
+    <a href="{{ prev_url }}">Newer posts</a>
+    {% endif %}
+    {% if next_url %}
+    <a href="{{ next_url }}">Older posts</a>
+    {% endif %}
+```
+
+After you are done experiment with the pagination feature, you can set the POSTS_PER_PAGE configuration item to a more reasonable value:
+
+
+
+
+
+
+
