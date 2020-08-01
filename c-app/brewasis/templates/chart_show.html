@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>{{ title }}</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}" />
+</head>
+
+<body>
+  <center>
+    <h1>{{ title }}</h1>
+    <form method=post enctype="multipart/form-data">
+      <input type="text" name = "company" list="company" placeholder="Enter company"/>
+<datalist id="company" name="company" >
+  {{company_data | safe}}
+</datalist>
+      <div><button id="go" type="submit">Enter</button></div>
+    </form>
+    <div class="canvas">
+      <canvas id="myChart" width="800" height="400"></canvas>
+    </div>
+    <script>
+    var ctx = document.getElementById('myChart').getContext('2d');
+    colors = ['rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'];
+    list =   [{% for item in values %}
+              {% for i in item %}
+                  {{ i }},
+              {% endfor %}
+              {% endfor %}
+             ];
+    company =  [{% for item in label_company %}
+                {% for i in item %}
+                  {{ i|tojson }},
+                {% endfor %}
+                {% endfor %}
+               ];
+    var barData = {
+         type: 'line'};
+    barData.data = {};
+    barData.data.labels = [ {% for item in labels %}
+                                "{{ item }}",
+                            {% endfor %} ];
+
+    datalist = [];
+      line = 0;
+      datalist.push({});
+      dataset = datalist[line];
+      dataset.label = company[line];
+      dataset.fill = false;
+      dataset.borderColor = colors[line];
+      dataset.backgroundColor = colors[line];
+      dataset.borderWidth = 2;
+      dataset.pointStrokeColor = "#fff";
+      dataset.pointHighlightFill = "#fff";
+      dataset.ointHighlightStroke = colors[line];
+      dataset.data = list.slice(line*10,(line+1)*10+1)
+    barData.data.datasets = datalist;
+    barData.options = {
+      legend: {
+        labels : { usePointStyle: true },
+        display: true,
+        position: 'top'
+      },
+      scales: {
+        xAxes: [{
+          beginAtZero: true,
+          ticks: { autoSkip: false },
+          gridLines: {
+            color: 'rgba(0,0,0,1)',
+            lineWidth: 0.5
+          }
+        }],
+        yAxes: [{
+          beginAtZero: true,
+          ticks: { autoSkip: false },
+          gridLines: {
+            color: 'rgba(0,0,0,1)',
+            lineWidth: 0.5
+          }
+        }]
+      }
+    };
+    console.log(barData)
+    Chart.defaults.global.responsive = false;
+    var chart = new Chart(ctx, barData)
+  </script>
+  </center>
+</body>
+</html>
